@@ -3,47 +3,54 @@ package io;
 import model.Book;
 import model.Magazine;
 import java.util.Scanner;
+import io.ConsolePrinter;
 
 public class dataReader {
-private Scanner scanner = new Scanner(System.in);
+    private ConsolePrinter consolePrinter;
+    public dataReader(ConsolePrinter consolePrinter) {
+        this.consolePrinter = consolePrinter;
+    }
+
+    private Scanner scanner = new Scanner(System.in);
+
 
 public Book readAndCreateBook() {
-    System.out.println("Podaj Tytuł: ");
+    consolePrinter.printLine("Podaj Tytuł: ");
     String title = scanner.nextLine();
-    System.out.println("Podaj Autor: ");
+    consolePrinter.printLine("Podaj Autor: ");
     String author = scanner.nextLine();
-    System.out.println("Podaj Wydawnictwo: ");
+    consolePrinter.printLine("Podaj Wydawnictwo: ");
     String publisher = scanner.nextLine();
-    System.out.println("Podaj numer ISBN: ");
+    consolePrinter.printLine("Podaj numer ISBN: ");
     String isbn = scanner.nextLine();
-    System.out.println("Podaj rok wydania: ");
+    consolePrinter.printLine("Podaj rok wydania: ");
     int releaseDate = scanner.nextInt();
     scanner.nextLine();
-    System.out.println("Podaj ilość stron: ");
+    consolePrinter.printLine("Podaj ilość stron: ");
     int pages = scanner.nextInt();
     scanner.nextLine();
     return  new Book(releaseDate, title,publisher, author, pages,  isbn);
 }
 public Magazine readAndCreateMagazine() {
-    System.out.println("Podaj Tytuł: ");
+    consolePrinter.printLine("Podaj Tytuł: ");
     String title = scanner.nextLine();
 
-    System.out.println("Podaj Wydawnictwo: ");
+    consolePrinter.printLine("Podaj Wydawnictwo: ");
     String publisher = scanner.nextLine();
 
-    System.out.println("rok wydania: ");
+    consolePrinter.printLine("rok wydania: ");
     int year = scanner.nextInt();
     scanner.nextLine();
 
-    System.out.println("Podaj miesiąc wydania: ");
+    consolePrinter.printLine("Podaj miesiąc wydania: ");
     int month = scanner.nextInt();
     scanner.nextLine();
 
-    System.out.println("Podaj dzień wydania: ");
+    consolePrinter.printLine("Podaj dzień wydania: ");
     int day = scanner.nextInt();
     scanner.nextLine();
 
-    System.out.println("Podaj język wydania: ");
+    consolePrinter.printLine("Podaj język wydania: ");
     String language = scanner.nextLine();
 
     return  new Magazine(year, title, publisher,  month, day, language);
@@ -53,9 +60,12 @@ public Magazine readAndCreateMagazine() {
 
 
 public int getInt(){
-    int number = scanner.nextInt();
-    scanner.nextLine();
-    return number;
+    try {
+        return scanner.nextInt();       //tutaj w bloku try wrzucamy pobranie danych
+    }
+    finally {
+        scanner.nextLine();  // jeżeli wystąpi błąd, to i tak zostanie wyzerowana wartosć w strumieniu.
+    }
 }
 
 public void close(){

@@ -1,20 +1,27 @@
 package app;
+import Exceptions.NoSuchOptionException;
 import io.dataReader;
 import model.Library;
 import model.Book;
 import model.Magazine;
+import io.ConsolePrinter;
+import model.Publication;
+
+import java.util.InputMismatchException;
+import java.util.Optional;
 
 
 public class LIbraryControl {
-
-    private dataReader dataReader = new dataReader();
+    private ConsolePrinter consolePrinter = new ConsolePrinter();
+    private dataReader dataReader = new dataReader(consolePrinter);
     private Library library = new Library();
+
 
     public void controlLoop (){
         option option;
         do {
             printOptions();                     // wczytuje wybór z metody printOptions
-            option = app.option.createFromInt(dataReader.getInt());       // wczytuje wybór użytkownia metodą getInt z klasy dataReader
+            option = getOption();       // wczytuje wybór użytkownia metodą getInt z klasy dataReader
             switch (option){
                 case ADD_BOOK:
                     addBook();                  //wczytuje metodę Addbook
@@ -37,7 +44,7 @@ public class LIbraryControl {
                 exit();                         // wczytuje metodę exit
                 break;
                 default:
-                    System.out.println("NIe ma takiej opcji");
+                    consolePrinter.printLine("NIe ma takiej opcji");
 
         }
 
@@ -49,33 +56,70 @@ public class LIbraryControl {
 
     }
 
+    private option getOption() {
+        boolean optionOk = false;
+        option option = null;
+        while (!optionOk){
+            try{
+                option = app.option.createFromInt(dataReader.getInt());
+                optionOk = true;
+            }
+            catch (NoSuchOptionException e){
+                consolePrinter.printLine(e.getMessage());
+            }
+            catch (InputMismatchException e){
+                consolePrinter.printLine("Wprowadzona wartość nie jest liczbą.");
+            }
+        }
+        return option;   // stop na 14:40
+    }
+
     private void printMagazines() {
-        library.printMagazines();
+        Publication[] publications = library.getPublications();
+        consolePrinter.printMagazines(publications);
     }
 
     private void addMagazine() {
-       Magazine magazine = dataReader.readAndCreateMagazine();
-        library.addMagazine(magazine);
-    }
+        try {
+            Magazine magazine = dataReader.readAndCreateMagazine();
+            library.addMagazine(magazine);
+        }
+        catch (InputMismatchException e){
+            consolePrinter.printLine("Nie udało się utworzyć magazynu");
+        }
+        catch (ArrayIndexOutOfBoundsException e){
+            consolePrinter.printLine("Osiąnięto limit pojemności, nie można dodać magazynu.");
+        }
+        }
+
 
     private void exit() {
-        System.out.println("KOniec programu, papa!");
+        consolePrinter.printLine("KOniec programu, papa!");
         dataReader.close();
     }
 
     private void printBooks() {
-        library.printBooks();                      // wczytuje metodę printBooks z klasy library
+        Publication[] publications = library.getPublications();// wczytuje metodę printBooks z klasy library
+        consolePrinter.printBooks(publications);
     }
 
     private void addBook() {
-        Book book = dataReader.readAndCreateBook();              // wczytuje metoreę readAndCreateBook z klasy dataReader
-        library.addBook(book);
+        try {
+            Book book = dataReader.readAndCreateBook();              // wczytuje metoreę readAndCreateBook z klasy dataReader
+            library.addBook(book);
+        }
+        catch (InputMismatchException e){
+            consolePrinter.printLine("Nie udało się utworzyć książki");
+        }
+        catch (ArrayIndexOutOfBoundsException e){
+            consolePrinter.printLine("Osiąnięto limit pojemności, nie można dodać książki.");
+        }
     }
 
     private void printOptions() {
-        System.out.println("Wybierz opcję: ");
+        consolePrinter.printLine("Wybierz opcję: ");
         for (option value : option.values()) {
-            System.out.println(value);
+            consolePrinter.printLine(value.toString());     //jawne wywołanie .toString
 
         }
     }
