@@ -2,7 +2,7 @@ package model;
 
 import java.util.Objects;
 
-public class Publication {                  //klasa nadrzędna dla Book oraz Magazine
+public abstract class Publication {                  //klasa nadrzędna dla Book oraz Magazine
     private int year;
     private String title;
     private String publisher;
