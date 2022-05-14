@@ -1,0 +1,57 @@
+package io.FIle;
+
+import Exceptions.NoSuchFileTypeException;
+import io.ConsolePrinter;
+import io.dataReader;
+
+import java.io.File;
+
+public class FileManagerBuilder {
+    private ConsolePrinter printer;
+    private dataReader reader;
+
+    public FileManagerBuilder(ConsolePrinter printer, dataReader reader) {
+        this.printer = printer;
+        this.reader = reader;
+    }
+
+    public FileManager build(){
+        printer.printLine("Wybierz format danych: ");
+        FileType fileType = getFileType();
+        switch (fileType){
+
+            case SERIAL :
+                return new SerializableFIleManager();
+            case CSV:
+                return new CsvFileManager();
+            default:
+                throw new NoSuchFileTypeException("nie obsługiwant typ danych");
+        }
+
+    }
+
+    private FileType getFileType() {
+        boolean typeOk = false;
+        FileType result = null;
+        do{
+            printTypes();
+            //serial, SERIAL
+            String type = reader.getString().toUpperCase();
+            try{
+                result = FileType.valueOf(type);
+                typeOk = true;
+            } catch (IllegalArgumentException e) {
+                printer.printLine("Nie obsługiwany typ danych, wybierz ponownie");
+            }
+        }while (!typeOk);
+        return result;
+    }
+
+    private void printTypes() {
+        for (FileType value : FileType.values()) {
+            printer.printLine(value.name());
+        }
+
+
+    }
+}

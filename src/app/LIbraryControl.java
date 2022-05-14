@@ -1,5 +1,9 @@
 package app;
+import Exceptions.DataExportException;
+import Exceptions.DataImportException;
 import Exceptions.NoSuchOptionException;
+import io.FIle.FileManager;
+import io.FIle.FileManagerBuilder;
 import io.dataReader;
 import model.Library;
 import model.Book;
@@ -14,10 +18,24 @@ import java.util.Optional;
 public class LIbraryControl {
     private ConsolePrinter consolePrinter = new ConsolePrinter();
     private dataReader dataReader = new dataReader(consolePrinter);
-    private Library library = new Library();
+    private FileManager fileManager;
 
+    private Library library;
 
-    public void controlLoop (){
+    LIbraryControl() {
+      fileManager =  new FileManagerBuilder(consolePrinter, dataReader).build();
+      try {
+          library = fileManager.importData();
+          consolePrinter.printLine("Zaimportowano dane z pliku: ");
+      } catch (DataImportException e) {
+          consolePrinter.printLine(e.getMessage());
+          consolePrinter.printLine("Zainicjowano nową bazę.");
+          library = new Library();  // w razie błędu stworzy pustą bibliotekę
+
+      }
+    }
+
+    void controlLoop (){
         option option;
         do {
             printOptions();                     // wczytuje wybór z metody printOptions
@@ -82,7 +100,7 @@ public class LIbraryControl {
     private void addMagazine() {
         try {
             Magazine magazine = dataReader.readAndCreateMagazine();
-            library.addMagazine(magazine);
+            library.addPublication(magazine);
         }
         catch (InputMismatchException e){
             consolePrinter.printLine("Nie udało się utworzyć magazynu");
@@ -94,6 +112,12 @@ public class LIbraryControl {
 
 
     private void exit() {
+        try {
+            fileManager.exportData(library);
+            consolePrinter.printLine("Export danych do pliku, zakończony powodzeniem.");
+        } catch (DataExportException e){
+            consolePrinter.printLine(e.getMessage());
+        }
         consolePrinter.printLine("KOniec programu, papa!");
         dataReader.close();
     }
@@ -106,7 +130,7 @@ public class LIbraryControl {
     private void addBook() {
         try {
             Book book = dataReader.readAndCreateBook();              // wczytuje metoreę readAndCreateBook z klasy dataReader
-            library.addBook(book);
+            library.addPublication(book);
         }
         catch (InputMismatchException e){
             consolePrinter.printLine("Nie udało się utworzyć książki");
