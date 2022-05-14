@@ -1,6 +1,7 @@
 package app;
 import Exceptions.DataExportException;
 import Exceptions.DataImportException;
+import Exceptions.InvalidDataException;
 import Exceptions.NoSuchOptionException;
 import io.FIle.FileManager;
 import io.FIle.FileManagerBuilder;
@@ -27,7 +28,7 @@ public class LIbraryControl {
       try {
           library = fileManager.importData();
           consolePrinter.printLine("Zaimportowano dane z pliku: ");
-      } catch (DataImportException e) {
+      } catch (DataImportException | InvalidDataException e) {
           consolePrinter.printLine(e.getMessage());
           consolePrinter.printLine("Zainicjowano nową bazę.");
           library = new Library();  // w razie błędu stworzy pustą bibliotekę
