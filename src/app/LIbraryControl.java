@@ -59,9 +59,18 @@ public class LIbraryControl {
                 printBooks();                   // wczytuje metodę printbooks
                 break;
 
-            case EXIT:
-                exit();                         // wczytuje metodę exit
-                break;
+                case DELETE_BOOK:
+                    deleteBook();
+                    break;
+
+                case DELETE_MAGAZINE:
+                    deleteMagazine();
+                    break;
+
+                case EXIT:
+                    exit();                         // wczytuje metodę exit
+                    break;
+
                 default:
                     consolePrinter.printLine("NIe ma takiej opcji");
 
@@ -74,6 +83,8 @@ public class LIbraryControl {
 
 
     }
+
+
 
     private option getOption() {
         boolean optionOk = false;
@@ -111,6 +122,19 @@ public class LIbraryControl {
         }
         }
 
+    private void deleteMagazine()   {
+        try {
+            Magazine magazine = dataReader.readAndCreateMagazine();
+            if (library.removePublication(magazine)) {
+                consolePrinter.printLine("Usunięto magazyn");
+            } else
+                consolePrinter.printLine("BRak wskazanego magazynu");
+        }
+        catch (InputMismatchException e){
+            consolePrinter.printLine("Nie udało się uwtorzyć magazynu, niepoprawne dane.");
+        }
+    }
+
 
     private void exit() {
         try {
@@ -141,6 +165,21 @@ public class LIbraryControl {
         }
     }
 
+    private void deleteBook() {
+        try {
+            Book book = dataReader.readAndCreateBook();
+            if (library.removePublication(book)) {
+                consolePrinter.printLine("Usunięto książkę");
+            } else
+                consolePrinter.printLine("BRak wskazanej książki");
+        }
+        catch (InputMismatchException e){
+            consolePrinter.printLine("Nie udało się uwtorzyć książki, niepoprawne dane.");
+        }
+    }
+
+
+
     private void printOptions() {
         consolePrinter.printLine("Wybierz opcję: ");
         for (option value : option.values()) {
@@ -154,7 +193,9 @@ public class LIbraryControl {
         ADD_BOOK (1, " - dodanie nowej książki"),
         ADD_MAGAZINE (2, " - dodanie nowego magazynu"),
         PRINT_BOOKS (3, " - wyświetl dostępne książki"),
-        PRINT_MAGAZINES (4, " - wyświetl dostępnę magazyny");
+        PRINT_MAGAZINES (4, " - wyświetl dostępnę magazyny"),
+        DELETE_BOOK (5, "Usuń książkę"),
+        DELETE_MAGAZINE (6, "Usuń magazyn");
 
         private final int value;
         private final String description;
